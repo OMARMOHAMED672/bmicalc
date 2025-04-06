@@ -1,40 +1,981 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BMI Calculator</title>
-    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
-    <style type="text/tailwindcss">
-      @theme {
-        --color-clifford: #da373d;
-      }
+    <title>Omar Mohamed - Professional Frontend Developer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        // Tailwind dark mode configuration
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                            950: '#082f49',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* RTL support for Arabic */
+        html[dir="rtl"] * {
+            text-align: right;
+        }
+        
+        html[dir="rtl"] .rtl-reverse {
+            flex-direction: row-reverse;
+        }
+        
+        html[dir="rtl"] .rtl-ml-auto {
+            margin-right: auto !important;
+            margin-left: 0 !important;
+        }
+        
+        html[dir="rtl"] .rtl-mr {
+            margin-left: 1rem !important;
+            margin-right: 0 !important;
+        }
+        
+        html[dir="rtl"] .rtl-ml {
+            margin-right: 1rem !important;
+            margin-left: 0 !important;
+        }
+        
+        html[dir="rtl"] .space-x-8 > * + * {
+            margin-right: 2rem !important;
+            margin-left: 0 !important;
+        }
+        
+        html[dir="rtl"] .space-x-4 > * + * {
+            margin-right: 1rem !important;
+            margin-left: 0 !important;
+        }
+        
+        /* Fixed navbar for Arabic */
+        .navbar-arabic {
+            background-color: #1a202c;
+            color: white;
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            z-index: 50;
+        }
+        
+        .navbar-arabic a {
+            color: white;
+            margin-left: 1.5rem;
+        }
+        
+        html[dir="rtl"] .navbar-arabic {
+            justify-content: flex-start;
+        }
+        
+        html[dir="rtl"] .navbar-arabic a {
+            margin-right: 1.5rem;
+            margin-left: 0;
+        }
+        
+        .lang-switch {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            margin-left: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        html[dir="rtl"] .lang-switch {
+            margin-right: 1rem;
+            margin-left: 0;
+        }
+        
+        /* Skill bar styles */
+        .skill-bar {
+            height: 10px;
+            border-radius: 5px;
+            background-color: #e5e7eb;
+            overflow: hidden;
+        }
+        
+        .skill-progress {
+            height: 100%;
+            border-radius: 5px;
+            background-color: #0ea5e9;
+            transition: width 1s ease-in-out;
+        }
+        
+        .dark .skill-bar {
+            background-color: #374151;
+        }
     </style>
 </head>
-<body class="bg-gradient-to-r from-blue-300 to-purple-200 min-h-screen p-4">
-    <h1 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500 drop-shadow-lg text-center">
-        BMI CALCULATOR
-    </h1>
-   
-    <h1 class="text-4xl font-semibold mt-20 text-center">Select Your Gender</h1>
-    
-    <div class="flex justify-center gap-8 mt-8">
-        <div class="flex flex-col items-center">
-            <div class="w-24 h-24 bg-blue-200 rounded-full flex items-center justify-center">
-                <span class="text-5xl text-blue-500">♂</span>
-            </div>
-            <button id="male-btn" class="mt-2 px-6 py-2 rounded-lg font-bold transition-all duration-300 border-2 border-blue-500 hover:bg-blue-500 hover:text-white">MAN</button>
-        </div>
-        <div class="flex flex-col items-center">
-            <div class="w-24 h-24 bg-pink-200 rounded-full flex items-center justify-center">
-                <span class="text-5xl text-pink-500">♀</span>
-            </div>
-            <button id="female-btn" class="mt-2 px-6 py-2 rounded-lg font-bold transition-all duration-300 border-2 border-pink-500 hover:bg-pink-500 hover:text-white">WOMAN</button>
+<body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300 font-sans">
+    <!-- Arabic-style Navigation when in Arabic mode -->
+    <div id="arabic-navbar" class="navbar-arabic hidden">
+        <a href="#skills" data-translate="nav_skills">المهارات</a>
+        <a href="#contact" data-translate="nav_contact">اتصل بي</a>
+        <a href="#projects" data-translate="nav_projects">المشاريع</a>
+        <a href="#home" data-translate="nav_home">الرئيسية</a>
+        <div class="rtl-ml-auto flex items-center">
+            <button id="theme-toggle-ar" class="text-white p-2">
+                <i id="theme-toggle-dark-icon-ar" class="fas fa-moon hidden"></i>
+                <i id="theme-toggle-light-icon-ar" class="fas fa-sun hidden"></i>
+            </button>
+            <button id="language-toggle-ar" class="lang-switch">
+                <span id="current-lang-ar">AR</span>
+            </button>
         </div>
     </div>
 
-    <div id="bmi-form-container" class="max-w-md mx-auto mt-10"></div>
+    <!-- Regular Navigation for English mode -->
+    <nav id="english-navbar" class="bg-white dark:bg-gray-800 shadow-sm fixed w-full z-10 transition-colors duration-300">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <!-- Logo/Name -->
+                <a href="#" class="text-xl font-bold text-gray-800 dark:text-white" data-translate="name">Omar Mohamed</a>
+                
+                <div class="flex items-center">
+                    <!-- Language Toggle -->
+                    <button id="language-toggle" class="p-2 mr-4 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white focus:outline-none">
+                        <span id="current-lang">EN</span>
+                        <i class="fas fa-language ml-1"></i>
+                    </button>
+                    
+                    <!-- Theme Toggle -->
+                    <button id="theme-toggle" class="p-2 mr-4 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white focus:outline-none">
+                        <i id="theme-toggle-dark-icon" class="fas fa-moon hidden"></i>
+                        <i id="theme-toggle-light-icon" class="fas fa-sun hidden"></i>
+                    </button>
+                    
+                    <!-- Mobile menu button -->
+                    <div class="md:hidden">
+                        <button id="menu-toggle" class="text-gray-600 dark:text-gray-300 focus:outline-none">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Desktop Navigation -->
+                    <div class="hidden md:flex space-x-8">
+                        <a href="#home" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white" data-translate="nav_home">Home</a>
+                        <a href="#projects" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white" data-translate="nav_projects">Projects</a>
+                        <a href="#skills" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white" data-translate="nav_skills">Skills</a>
+                        <a href="#contact" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white" data-translate="nav_contact">Contact</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mobile Navigation -->
+            <div id="mobile-menu" class="md:hidden hidden">
+                <div class="flex flex-col space-y-4 mt-4 pb-3">
+                    <a href="#home" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white" data-translate="nav_home">Home</a>
+                    <a href="#projects" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white" data-translate="nav_projects">Projects</a>
+                    <a href="#skills" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white" data-translate="nav_skills">Skills</a>
+                    <a href="#contact" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white" data-translate="nav_contact">Contact</a>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-    <script src="main.js"></script>
+    <!-- Hero Section -->
+    <section id="home" class="pt-24 pb-16 md:pt-32 md:pb-24">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">
+                    <span data-translate="hero_hi">Hi, I'm</span> 
+                    <span data-translate="name">Omar Mohamed</span>
+                </h1>
+                <h2 class="text-2xl md:text-3xl text-gray-600 dark:text-gray-400 mb-6" data-translate="hero_title">Senior Frontend Developer</h2>
+                <div class="w-16 h-1 bg-primary-500 mx-auto mb-6"></div>
+                <p class="text-lg text-gray-600 dark:text-gray-400 mb-8" data-translate="hero_bio">
+                    I'm a results-driven frontend developer with strong business knowledge, specializing in creating exceptional digital experiences. With expertise in modern JavaScript frameworks, responsive design principles, and performance optimization, I transform complex requirements into elegant, user-centric solutions that drive business growth. My approach combines technical excellence with strategic business thinking to deliver products that exceed expectations.
+                </p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="#projects" class="inline-block bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition duration-300" data-translate="hero_cta">
+                        View My Work
+                    </a>
+                    <a href="#contact" class="inline-block bg-white dark:bg-gray-800 text-primary-600 dark:text-primary-400 border border-primary-600 dark:border-primary-400 px-6 py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-300" data-translate="hero_contact">
+                        Contact Me
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="py-16 bg-gray-100 dark:bg-gray-800 transition-colors duration-300">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-4" data-translate="projects_title">Featured Projects</h2>
+            <p class="text-center text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-12" data-translate="projects_subtitle">
+                A selection of my most impactful work, demonstrating technical expertise and problem-solving capabilities.
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Project 1 -->
+                <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md overflow-hidden transition-colors duration-300 hover:shadow-lg">
+                    <img src="/placeholder.svg?height=200&width=400" alt="Project 1" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex flex-wrap gap-2 mb-3">
+                            <span class="px-2 py-1 bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 text-xs rounded-full">React</span>
+                            <span class="px-2 py-1 bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 text-xs rounded-full">TypeScript</span>
+                            <span class="px-2 py-1 bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 text-xs rounded-full">Tailwind CSS</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2" data-translate="project1_title">E-Commerce Platform</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4" data-translate="project1_desc">
+                            A comprehensive e-commerce solution with advanced filtering, real-time inventory management, and seamless payment integration. Implemented with React, TypeScript, and Redux for state management.
+                        </p>
+                        <div class="flex justify-between items-center">
+                            <a href="#" class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium">
+                                <span data-translate="project_view">View Project</span> →
+                            </a>
+                            <div class="flex space-x-2">
+                                <a href="#" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                                    <i class="fab fa-github"></i>
+                                </a>
+                                <a href="#" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Project 2 -->
+                <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md overflow-hidden transition-colors duration-300 hover:shadow-lg">
+                    <img src="/placeholder.svg?height=200&width=400" alt="Project 2" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex flex-wrap gap-2 mb-3">
+                            <span class="px-2 py-1 bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 text-xs rounded-full">Vue.js</span>
+                            <span class="px-2 py-1 bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 text-xs rounded-full">Node.js</span>
+                            <span class="px-2 py-1 bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 text-xs rounded-full">MongoDB</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2" data-translate="project2_title">Analytics Dashboard</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4" data-translate="project2_desc">
+                            A real-time analytics dashboard with interactive data visualization, customizable widgets, and automated reporting. Built with Vue.js and D3.js for dynamic charting capabilities.
+                        </p>
+                        <div class="flex justify-between items-center">
+                            <a href="#" class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium">
+                                <span data-translate="project_view">View Project</span> →
+                            </a>
+                            <div class="flex space-x-2">
+                                <a href="#" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                                    <i class="fab fa-github"></i>
+                                </a>
+                                <a href="#" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Project 3 -->
+                <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md overflow-hidden transition-colors duration-300 hover:shadow-lg">
+                    <img src="/placeholder.svg?height=200&width=400" alt="Project 3" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex flex-wrap gap-2 mb-3">
+                            <span class="px-2 py-1 bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 text-xs rounded-full">Next.js</span>
+                            <span class="px-2 py-1 bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 text-xs rounded-full">GraphQL</span>
+                            <span class="px-2 py-1 bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 text-xs rounded-full">Framer Motion</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2" data-translate="project3_title">Portfolio Website</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4" data-translate="project3_desc">
+                            A high-performance, accessible portfolio website with server-side rendering, dynamic content management, and smooth animations. Implemented with Next.js and optimized for SEO.
+                        </p>
+                        <div class="flex justify-between items-center">
+                            <a href="#" class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium">
+                                <span data-translate="project_view">View Project</span> →
+                            </a>
+                            <div class="flex space-x-2">
+                                <a href="#" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                                    <i class="fab fa-github"></i>
+                                </a>
+                                <a href="#" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="py-16">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-4" data-translate="skills_title">Technical Expertise</h2>
+            <p class="text-center text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-12" data-translate="skills_subtitle">
+                A comprehensive overview of my technical skills and proficiencies as a professional frontend developer.
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-5xl mx-auto">
+                <!-- Core Technologies -->
+                <div>
+                    <h3 class="text-xl font-bold mb-6 pb-2 border-b border-gray-200 dark:border-gray-700" data-translate="skills_core">Core Technologies</h3>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="font-medium">HTML5 & Semantic Markup</span>
+                                <span>95%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 95%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="font-medium">CSS3 & Preprocessors (SASS/LESS)</span>
+                                <span>90%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 90%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="font-medium">JavaScript (ES6+)</span>
+                                <span>92%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 92%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="font-medium">TypeScript</span>
+                                <span>85%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 85%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="font-medium">Responsive Web Design</span>
+                                <span>95%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 95%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Frameworks & Libraries -->
+                <div>
+                    <h3 class="text-xl font-bold mb-6 pb-2 border-b border-gray-200 dark:border-gray-700" data-translate="skills_frameworks">Frameworks & Libraries</h3>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="font-medium">React & React Ecosystem</span>
+                                <span>90%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 90%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="font-medium">Vue.js</span>
+                                <span>85%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 85%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="font-medium">Next.js</span>
+                                <span>88%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 88%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="font-medium">Tailwind CSS</span>
+                                <span>92%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 92%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="font-medium">Redux / Context API</span>
+                                <span>85%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 85%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tools & Workflow -->
+                <div>
+                    <h3 class="text-xl font-bold mb-6 pb-2 border-b border-gray-200 dark:border-gray-700" data-translate="skills_tools">Tools & Workflow</h3>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="font-medium">Git & Version Control</span>
+                                <span>90%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 90%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="font-medium">Webpack / Vite / Rollup</span>
+                                <span>85%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 85%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="font-medium">CI/CD Pipelines</span>
+                                <span>80%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 80%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="font-medium">Jest / Testing Library</span>
+                                <span>82%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 82%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="font-medium">Figma / Adobe XD</span>
+                                <span>78%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 78%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Additional Expertise -->
+                <div>
+                    <h3 class="text-xl font-bold mb-6 pb-2 border-b border-gray-200 dark:border-gray-700" data-translate="skills_additional">Additional Expertise</h3>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="font-medium">Web Performance Optimization</span>
+                                <span>88%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 88%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="font-medium">Accessibility (WCAG)</span>
+                                <span>85%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 85%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="font-medium">RESTful APIs / GraphQL</span>
+                                <span>90%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 90%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="font-medium">UI/UX Principles</span>
+                                <span>82%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 82%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="font-medium">Cross-Browser Compatibility</span>
+                                <span>92%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 92%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Technologies Grid -->
+            <div class="mt-16">
+                <h3 class="text-xl font-bold text-center mb-8" data-translate="skills_technologies">Technologies I Work With</h3>
+                
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 max-w-4xl mx-auto">
+                    <div class="flex flex-col items-center p-4 bg-white dark:bg-gray-700 rounded-lg shadow-sm hover:shadow-md transition-all">
+                        <i class="fab fa-html5 text-4xl text-orange-500 mb-2"></i>
+                        <span class="text-sm font-medium">HTML5</span>
+                    </div>
+                    <div class="flex flex-col items-center p-4 bg-white dark:bg-gray-700 rounded-lg shadow-sm hover:shadow-md transition-all">
+                        <i class="fab fa-css3-alt text-4xl text-blue-500 mb-2"></i>
+                        <span class="text-sm font-medium">CSS3</span>
+                    </div>
+                    <div class="flex flex-col items-center p-4 bg-white dark:bg-gray-700 rounded-lg shadow-sm hover:shadow-md transition-all">
+                        <i class="fab fa-js text-4xl text-yellow-500 mb-2"></i>
+                        <span class="text-sm font-medium">JavaScript</span>
+                    </div>
+                    <div class="flex flex-col items-center p-4 bg-white dark:bg-gray-700 rounded-lg shadow-sm hover:shadow-md transition-all">
+                        <i class="fab fa-react text-4xl text-blue-400 mb-2"></i>
+                        <span class="text-sm font-medium">React</span>
+                    </div>
+                    <div class="flex flex-col items-center p-4 bg-white dark:bg-gray-700 rounded-lg shadow-sm hover:shadow-md transition-all">
+                        <i class="fab fa-vuejs text-4xl text-green-500 mb-2"></i>
+                        <span class="text-sm font-medium">Vue.js</span>
+                    </div>
+                    <div class="flex flex-col items-center p-4 bg-white dark:bg-gray-700 rounded-lg shadow-sm hover:shadow-md transition-all">
+                        <i class="fab fa-node-js text-4xl text-green-600 mb-2"></i>
+                        <span class="text-sm font-medium">Node.js</span>
+                    </div>
+                    <div class="flex flex-col items-center p-4 bg-white dark:bg-gray-700 rounded-lg shadow-sm hover:shadow-md transition-all">
+                        <i class="fab fa-sass text-4xl text-pink-500 mb-2"></i>
+                        <span class="text-sm font-medium">Sass</span>
+                    </div>
+                    <div class="flex flex-col items-center p-4 bg-white dark:bg-gray-700 rounded-lg shadow-sm hover:shadow-md transition-all">
+                        <i class="fab fa-git-alt text-4xl text-orange-600 mb-2"></i>
+                        <span class="text-sm font-medium">Git</span>
+                    </div>
+                    <div class="flex flex-col items-center p-4 bg-white dark:bg-gray-700 rounded-lg shadow-sm hover:shadow-md transition-all">
+                        <i class="fab fa-npm text-4xl text-red-500 mb-2"></i>
+                        <span class="text-sm font-medium">npm</span>
+                    </div>
+                    <div class="flex flex-col items-center p-4 bg-white dark:bg-gray-700 rounded-lg shadow-sm hover:shadow-md transition-all">
+                        <i class="fab fa-figma text-4xl text-purple-500 mb-2"></i>
+                        <span class="text-sm font-medium">Figma</span>
+                    </div>
+                    <div class="flex flex-col items-center p-4 bg-white dark:bg-gray-700 rounded-lg shadow-sm hover:shadow-md transition-all">
+                        <i class="fab fa-github text-4xl text-gray-800 dark:text-white mb-2"></i>
+                        <span class="text-sm font-medium">GitHub</span>
+                    </div>
+                    <div class="flex flex-col items-center p-4 bg-white dark:bg-gray-700 rounded-lg shadow-sm hover:shadow-md transition-all">
+                        <i class="fab fa-docker text-4xl text-blue-500 mb-2"></i>
+                        <span class="text-sm font-medium">Docker</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-16 bg-gray-100 dark:bg-gray-800 transition-colors duration-300">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-4" data-translate="contact_title">Get In Touch</h2>
+            <p class="text-center text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-12" data-translate="contact_subtitle">
+                Interested in collaborating or have a project in mind? I'd love to hear from you. Let's create something exceptional together.
+            </p>
+            
+            <div class="max-w-lg mx-auto">
+                <form id="contact-form" class="space-y-6">
+                    <div>
+                        <label for="name" class="block text-gray-700 dark:text-gray-300 mb-2" data-translate="contact_name">Name</label>
+                        <input type="text" id="name" name="name" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-white transition-colors duration-300">
+                    </div>
+                    
+                    <div>
+                        <label for="email" class="block text-gray-700 dark:text-gray-300 mb-2" data-translate="contact_email">Email</label>
+                        <input type="email" id="email" name="email" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-white transition-colors duration-300">
+                    </div>
+                    
+                    <div>
+                        <label for="subject" class="block text-gray-700 dark:text-gray-300 mb-2" data-translate="contact_subject">Subject</label>
+                        <input type="text" id="subject" name="subject" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-white transition-colors duration-300">
+                    </div>
+                    
+                    <div>
+                        <label for="message" class="block text-gray-700 dark:text-gray-300 mb-2" data-translate="contact_message">Message</label>
+                        <textarea id="message" name="message" rows="4" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-white transition-colors duration-300"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition duration-300" data-translate="contact_send">
+                        Send Message
+                    </button>
+                </form>
+                
+                <div class="text-center mt-8">
+                    <p class="text-gray-600 dark:text-gray-400" data-translate="contact_or">Or reach me directly at:</p>
+                    <div class="flex flex-col items-center gap-2">
+                        <a href="mailto:omar.mohamed@example.com" class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium">omar.mohamed@example.com</a>
+                        <a href="tel:+201113923298" class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium">+20 111 392 3298</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 dark:bg-gray-900 text-white py-8 transition-colors duration-300">
+        <div class="container mx-auto px-4 text-center">
+            <p>
+                <span data-translate="footer_copyright">© 2025</span> 
+                <span data-translate="name">Omar Mohamed</span>. 
+                <span data-translate="footer_rights">All rights reserved.</span>
+            </p>
+            <div class="flex justify-center space-x-4 mt-4">
+                <a href="#" class="text-gray-400 hover:text-white">
+                    <i class="fab fa-github text-xl"></i>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-white">
+                    <i class="fab fa-linkedin text-xl"></i>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-white">
+                    <i class="fab fa-twitter text-xl"></i>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-white">
+                    <i class="fab fa-dribbble text-xl"></i>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-white">
+                    <i class="fab fa-behance text-xl"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Translations
+        const translations = {
+            en: {
+                name: "Omar Mohamed",
+                nav_home: "Home",
+                nav_projects: "Projects",
+                nav_skills: "Skills",
+                nav_contact: "Contact",
+                hero_hi: "Hi, I'm",
+                hero_title: "Senior Frontend Developer",
+                hero_bio: "I'm a results-driven frontend developer with strong business knowledge, specializing in creating exceptional digital experiences. With expertise in modern JavaScript frameworks, responsive design principles, and performance optimization, I transform complex requirements into elegant, user-centric solutions that drive business growth. My approach combines technical excellence with strategic business thinking to deliver products that exceed expectations.",
+                hero_cta: "View My Work",
+                hero_contact: "Contact Me",
+                projects_title: "Featured Projects",
+                projects_subtitle: "A selection of my most impactful work, demonstrating technical expertise and problem-solving capabilities.",
+                project1_title: "E-Commerce Platform",
+                project1_desc: "A comprehensive e-commerce solution with advanced filtering, real-time inventory management, and seamless payment integration. Implemented with React, TypeScript, and Redux for state management.",
+                project2_title: "Analytics Dashboard",
+                project2_desc: "A real-time analytics dashboard with interactive data visualization, customizable widgets, and automated reporting. Built with Vue.js and D3.js for dynamic charting capabilities.",
+                project3_title: "Portfolio Website",
+                project3_desc: "A high-performance, accessible portfolio website with server-side rendering, dynamic content management, and smooth animations. Implemented with Next.js and optimized for SEO.",
+                project_view: "View Project",
+                skills_title: "Technical Expertise",
+                skills_subtitle: "A comprehensive overview of my technical skills and proficiencies as a professional frontend developer.",
+                skills_core: "Core Technologies",
+                skills_frameworks: "Frameworks & Libraries",
+                skills_tools: "Tools & Workflow",
+                skills_additional: "Additional Expertise",
+                skills_technologies: "Technologies I Work With",
+                contact_title: "Get In Touch",
+                contact_subtitle: "Interested in collaborating or have a project in mind? I'd love to hear from you. Let's create something exceptional together.",
+                contact_name: "Name",
+                contact_email: "Email",
+                contact_subject: "Subject",
+                contact_message: "Message",
+                contact_send: "Send Message",
+                contact_or: "Or reach me directly at:",
+                contact_phone: "+20 111 392 3298",
+                contact_email: "omar.mohamed@example.com",
+                footer_copyright: "© 2025",
+                footer_rights: "All rights reserved."
+            },
+            ar: {
+                name: "عمر محمد",
+                nav_home: "الرئيسية",
+                nav_projects: "المشاريع",
+                nav_skills: "المهارات",
+                nav_contact: "اتصل بي",
+                hero_hi: "مرحباً، أنا",
+                hero_title: "مطور واجهة أمامية متقدم",
+                hero_bio: "أنا مطور واجهة أمامية مدفوع بالنتائج مع معرفة قوية بالأعمال، متخصص في إنشاء تجارب رقمية استثنائية. بفضل خبرتي في أطر عمل جافاسكريبت الحديثة ومبادئ التصميم المتجاوب وتحسين الأداء، أقوم بتحويل المتطلبات المعقدة إلى حلول أنيقة تركز على المستخدم وتدفع نمو الأعمال. نهجي يجمع بين التميز التقني والتفكير الاستراتيجي للأعمال لتقديم منتجات تفوق التوقعات.",
+                hero_cta: "عرض أعمالي",
+                hero_contact: "اتصل بي",
+                projects_title: "مشاريع مميزة",
+                projects_subtitle: "مجموعة مختارة من أعمالي الأكثر تأثيراً، توضح الخبرة التقنية وقدرات حل المشكلات.",
+                project1_title: "منصة تجارة إلكترونية",
+                project1_desc: "حل شامل للتجارة الإلكترونية مع تصفية متقدمة، وإدارة المخزون في الوقت الفعلي، وتكامل سلس للدفع. تم تنفيذه باستخدام React و TypeScript و Redux لإدارة الحالة.",
+                project2_title: "لوحة تحليلات",
+                project2_desc: "لوحة تحليلات في الوقت الفعلي مع تصور بيانات تفاعلي، وأدوات قابلة للتخصيص، وتقارير آلية. تم بناؤها باستخدام Vue.js و D3.js لقدرات الرسم البياني الديناميكية.",
+                project3_title: "موقع المحفظة",
+                project3_desc: "موقع محفظة عالي الأداء وسهل الوصول مع عرض من جانب الخادم، وإدارة محتوى ديناميكية، ورسوم متحركة سلسة. تم تنفيذه باستخدام Next.js وتحسينه لتحسين محركات البحث.",
+                project_view: "عرض المشروع",
+                skills_title: "الخبرة التقنية",
+                skills_subtitle: "نظرة شاملة على مهاراتي التقنية وكفاءاتي كمطور واجهة أمامية محترف.",
+                skills_core: "التقنيات الأساسية",
+                skills_frameworks: "أطر العمل والمكتبات",
+                skills_tools: "الأدوات وسير العمل",
+                skills_additional: "خبرات إضافية",
+                skills_technologies: "التقنيات التي أعمل بها",
+                contact_title: "تواصل معي",
+                contact_subtitle: "مهتم بالتعاون أو لديك مشروع في ذهنك؟ أود أن أسمع منك. دعنا نبتكر شيئًا استثنائيًا معًا.",
+                contact_name: "الاسم",
+                contact_email: "البريد الإلكتروني",
+                contact_subject: "الموضوع",
+                contact_message: "الرسالة",
+                contact_send: "إرسال الرسالة",
+                contact_or: "أو تواصل معي مباشرة على:",
+                contact_phone: "+٢٠ ١١١ ٣٩٢ ٣٢٩٨",
+                contact_email: "omar.mohamed@example.com",
+                footer_copyright: "© ٢٠٢٥",
+                footer_rights: "جميع الحقوق محفوظة."
+            }
+        };
+
+        // Get DOM elements
+        const englishNavbar = document.getElementById('english-navbar');
+        const arabicNavbar = document.getElementById('arabic-navbar');
+        const languageToggleBtn = document.getElementById('language-toggle');
+        const languageToggleBtnAr = document.getElementById('language-toggle-ar');
+        const currentLangDisplay = document.getElementById('current-lang');
+        const currentLangDisplayAr = document.getElementById('current-lang-ar');
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeToggleBtnAr = document.getElementById('theme-toggle-ar');
+        const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+        const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+        const themeToggleDarkIconAr = document.getElementById('theme-toggle-dark-icon-ar');
+        const themeToggleLightIconAr = document.getElementById('theme-toggle-light-icon-ar');
+        
+        let currentLang = localStorage.getItem('language') || 'en';
+
+        // Set initial language
+        function setInitialLanguage() {
+            // Apply stored language or default to English
+            applyLanguage(currentLang);
+        }
+
+        // Apply translations based on selected language
+        function applyLanguage(lang) {
+            // Update HTML dir attribute for RTL support
+            document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+            
+            // Toggle between Arabic and English navbars
+            if (lang === 'ar') {
+                englishNavbar.classList.add('hidden');
+                arabicNavbar.classList.remove('hidden');
+                document.body.style.paddingTop = '56px'; // Adjust based on navbar height
+            } else {
+                englishNavbar.classList.remove('hidden');
+                arabicNavbar.classList.add('hidden');
+                document.body.style.paddingTop = '0';
+            }
+            
+            // Update all elements with data-translate attribute
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+            
+            // Update current language display
+            currentLangDisplay.textContent = lang.toUpperCase();
+            currentLangDisplayAr.textContent = lang.toUpperCase();
+            
+            // Store language preference
+            localStorage.setItem('language', lang);
+            currentLang = lang;
+            
+            // Update theme icons for both navbars
+            updateThemeIcons();
+        }
+
+        // Call function to set initial language
+        setInitialLanguage();
+
+        // Toggle language when button is clicked
+        languageToggleBtn.addEventListener('click', function() {
+            const newLang = currentLang === 'en' ? 'ar' : 'en';
+            applyLanguage(newLang);
+        });
+        
+        languageToggleBtnAr.addEventListener('click', function() {
+            const newLang = currentLang === 'en' ? 'ar' : 'en';
+            applyLanguage(newLang);
+        });
+
+        // Update theme icons for both navbars
+        function updateThemeIcons() {
+            const isDark = document.documentElement.classList.contains('dark');
+            
+            // English navbar icons
+            themeToggleDarkIcon.classList.toggle('hidden', isDark);
+            themeToggleLightIcon.classList.toggle('hidden', !isDark);
+            
+            // Arabic navbar icons
+            themeToggleDarkIconAr.classList.toggle('hidden', isDark);
+            themeToggleLightIconAr.classList.toggle('hidden', !isDark);
+        }
+
+        // Set the initial theme based on user preference or system preference
+        function setInitialTheme() {
+            // Check if theme preference is stored in localStorage
+            if (localStorage.getItem('color-theme') === 'dark' || 
+                (!localStorage.getItem('color-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                // Add dark class to html element
+                document.documentElement.classList.add('dark');
+            } else {
+                // Remove dark class from html element
+                document.documentElement.classList.remove('dark');
+            }
+            
+            // Update theme icons
+            updateThemeIcons();
+        }
+
+        // Call the function to set initial theme
+        setInitialTheme();
+
+        // Toggle theme when button is clicked (for both navbars)
+        function toggleTheme() {
+            // Toggle dark class on html element
+            document.documentElement.classList.toggle('dark');
+            
+            // Update localStorage
+            if (document.documentElement.classList.contains('dark')) {
+                localStorage.setItem('color-theme', 'dark');
+            } else {
+                localStorage.setItem('color-theme', 'light');
+            }
+            
+            // Update theme icons
+            updateThemeIcons();
+        }
+        
+        themeToggleBtn.addEventListener('click', toggleTheme);
+        themeToggleBtnAr.addEventListener('click', toggleTheme);
+
+        // Mobile menu toggle
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Close mobile menu if open
+                if (!mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.add('hidden');
+                }
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                window.scrollTo({
+                    top: targetElement.offsetTop - 70, // Adjust for fixed header
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // Animate skill bars on scroll
+        function animateSkillBars() {
+            const skillSection = document.getElementById('skills');
+            const skillBars = document.querySelectorAll('.skill-progress');
+            
+            const observer = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting) {
+                    skillBars.forEach(bar => {
+                        const width = bar.style.width;
+                        bar.style.width = '0';
+                        setTimeout(() => {
+                            bar.style.width = width;
+                        }, 100);
+                    });
+                    observer.unobserve(skillSection);
+                }
+            }, { threshold: 0.2 });
+            
+            observer.observe(skillSection);
+        }
+        
+        // Call the function when the page loads
+        window.addEventListener('load', animateSkillBars);
+        
+        // Simple form validation and handling
+        const contactForm = document.getElementById('contact-form');
+        
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const subject = document.getElementById('subject').value;
+            const message = document.getElementById('message').value;
+            
+            if (!name || !email || !subject || !message) {
+                alert(currentLang === 'en' ? 'Please fill in all fields' : 'يرجى ملء جميع الحقول');
+                return;
+            }
+            
+            // In a real application, you would send this data to a server
+            // For this example, we'll just show a success message
+            alert(currentLang === 'en' ? 
+                'Thanks for your message! I\'ll get back to you soon.' : 
+                'شكرا على رسالتك! سأرد عليك قريبا.');
+            contactForm.reset();
+        });
+    </script>
 </body>
 </html>
+
